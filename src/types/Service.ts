@@ -10,6 +10,8 @@ export interface ServiceType {
   amenities: string[];
   isOpen: boolean;
   images?: string[];
+  imageUrl?: string;
+  distance?: number;
   createdAt: string;
 }
 
@@ -25,6 +27,7 @@ export interface Review {
   helpfulCount: number;
   verified: boolean;
   images?: string[];
+  userAvatar?: string;
 }
 
 export interface LocationData {

@@ -180,7 +180,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onPress }) => {
             <View style={styles.distanceContainer}>
               <Icon name="directions-walk" size={14} color="#6b7280" />
               <Text style={styles.distanceText}>
-                {service.distance.toFixed(1)} km
+                {service.distance?.toFixed(1) || '0.0'} km
               </Text>
             </View>
           </View>
