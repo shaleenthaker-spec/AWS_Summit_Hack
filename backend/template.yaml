@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Facility Finder Backend - Bathrooms, Water Fountains, Hand Sanitizers, Sinks'
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.9
+    Environment:
+      Variables:
+        FACILITIES_TABLE: !Ref FacilitiesTable
+
+Resources:
+  # DynamoDB Table
+  FacilitiesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: facilities
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: facilityId
+          AttributeType: S
+        - AttributeName: facilityType
+          AttributeType: S
+        - AttributeName: lat
+          AttributeType: N
+        - AttributeName: lon
+          AttributeType: N
+      KeySchema:
+        - AttributeName: facilityId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: FacilityTypeIndex
+          KeySchema:
+            - AttributeName: facilityType
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: LocationIndex
+          KeySchema:
+            - AttributeName: lat
+              KeyType: HASH
+            - AttributeName: lon
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  # API Gateway
+  FacilityAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
+  # Lambda Functions
+  CreateFacilityFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/createFacility/
+      Handler: app.lambda_handler
+      Events:
+        CreateFacility:
+          Type: Api
+          Properties:
+            RestApiId: !Ref FacilityAPI
+            Path: /facilities
+            Method: post
+
+  FindNearbyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/findNearby/
+      Handler: app.lambda_handler
+      Events:
+        FindNearby:
+          Type: Api
+          Properties:
+            RestApiId: !Ref FacilityAPI
+            Path: /facilities/nearby
+            Method: get
+
+  GetFacilityFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/getFacility/
+      Handler: app.lambda_handler
+      Events:
+        GetFacility:
+          Type: Api
+          Properties:
+            RestApiId: !Ref FacilityAPI
+            Path: /facilities/{facilityId}
+            Method: get
+
+  SubmitRatingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/submitRating/
+      Handler: app.lambda_handler
+      Events:
+        SubmitRating:
+          Type: Api
+          Properties:
+            RestApiId: !Ref FacilityAPI
+            Path: /facilities/{facilityId}/rating
+            Method: post
+
+Outputs:
+  FacilityAPI:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${FacilityAPI}.execute-api.${AWS::Region}.amazonaws.com/prod/"
+    Export:
+      Name: FacilityAPIUrl
