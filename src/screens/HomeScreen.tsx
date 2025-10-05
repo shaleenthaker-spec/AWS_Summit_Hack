@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,41 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { useLocation } from '../context/LocationContext';
+import { ApiService } from '../services/api';
+import { ServiceType } from '../types/Service';
 
 const HomeScreen: React.FC = () => {
   const { location, loading, error, requestLocation } = useLocation();
+  const [nearbyServices, setNearbyServices] = useState<ServiceType[]>([]);
+  const [servicesLoading, setServicesLoading] = useState(false);
+
+  // Fetch nearby services when location is available
+  useEffect(() => {
+    if (location) {
+      fetchNearbyServices();
+    }
+  }, [location]);
+
+  const fetchNearbyServices = async () => {
+    if (!location) return;
+    
+    setServicesLoading(true);
+    try {
+      const services = await ApiService.getNearbyServices(
+        location.latitude,
+        location.longitude,
+        5 // 5km radius
+      );
+      setNearbyServices(services);
+    } catch (error) {
+      console.error('Failed to fetch nearby services:', error);
+    } finally {
+      setServicesLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -66,6 +96,46 @@ const HomeScreen: React.FC = () => {
           </View>
         </View>
 
+        <View style={styles.servicesCard}>
+          <Text style={styles.cardTitle}>🏪 Nearby Services</Text>
+          {servicesLoading && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color="#2563eb" />
+              <Text style={styles.loadingText}>Finding nearby services...</Text>
+            </View>
+          )}
+          {!servicesLoading && nearbyServices.length === 0 && location && (
+            <Text style={styles.noServicesText}>No services found nearby</Text>
+          )}
+          {!servicesLoading && nearbyServices.length > 0 && (
+            <View>
+              {nearbyServices.slice(0, 3).map((service) => (
+                <View key={service.id} style={styles.serviceItem}>
+                  <Text style={styles.serviceIcon}>
+                    {service.type === 'bathroom' ? '🚽' : 
+                     service.type === 'water_fountain' ? '💧' :
+                     service.type === 'hand_sanitizer' ? '🧴' : '🚰'}
+                  </Text>
+                  <View style={styles.serviceInfo}>
+                    <Text style={styles.serviceName}>{service.name}</Text>
+                    <Text style={styles.serviceDetails}>
+                      {service.type.replace('_', ' ')} • {service.distance?.toFixed(1)}km • ⭐ {service.rating.toFixed(1)}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+              {nearbyServices.length > 3 && (
+                <Text style={styles.moreServicesText}>
+                  +{nearbyServices.length - 3} more services nearby
+                </Text>
+              )}
+            </View>
+          )}
+          <TouchableOpacity style={styles.refreshButton} onPress={fetchNearbyServices}>
+            <Text style={styles.refreshButtonText}>🔄 Refresh Services</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.infoCard}>
           <Text style={styles.cardTitle}>ℹ️ App Status</Text>
           <Text style={styles.infoText}>✅ Project merged successfully!</Text>
@@ -114,6 +184,17 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   quickAccessCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  servicesCard: {
     backgroundColor: '#ffffff',
     borderRadius: 16,
     padding: 20,
@@ -198,6 +279,55 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#059669',
     marginBottom: 4,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  loadingText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  noServicesText: {
+    fontSize: 14,
+    color: '#6b7280',
+    textAlign: 'center',
+    padding: 20,
+    fontStyle: 'italic',
+  },
+  serviceItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+  },
+  serviceIcon: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  serviceInfo: {
+    flex: 1,
+  },
+  serviceName: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#111827',
+    marginBottom: 2,
+  },
+  serviceDetails: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  moreServicesText: {
+    fontSize: 12,
+    color: '#2563eb',
+    textAlign: 'center',
+    marginTop: 8,
+    fontStyle: 'italic',
   },
 });
 

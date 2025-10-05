@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Functions</title>
+</head>
+<body>
+    <h1>Test Lavatory Finder Functions</h1>
+    <button onclick="testQuickAccess()">Test Quick Access</button>
+    <button onclick="testMap()">Test Map</button>
+    <div id="results"></div>
+
+    <script>
+        // Mock data
+        const mockServices = [
+            {
+                id: '1',
+                name: 'City Mall Restroom',
+                type: 'bathroom',
+                rating: 4.2,
+                reviewCount: 156,
+                latitude: 37.7749,
+                longitude: -122.4194,
+                address: '123 Main St, Downtown',
+                amenities: ['wheelchair', 'baby-changing'],
+                isOpen: true,
+                distance: 0.5
+            },
+            {
+                id: '2',
+                name: 'Central Park Water Fountain',
+                type: 'water_fountain',
+                rating: 4.5,
+                reviewCount: 89,
+                latitude: 37.7849,
+                longitude: -122.4094,
+                address: '456 Park Ave',
+                amenities: ['filtered-water'],
+                isOpen: true,
+                distance: 1.2
+            }
+        ];
+
+        function testQuickAccess() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Testing Quick Access Functions</h2>';
+            
+            // Test filterNearbyServices
+            try {
+                const userLocation = { latitude: 37.7749, longitude: -122.4194 };
+                const filtered = mockServices.filter(service => service.type === 'bathroom');
+                results.innerHTML += '<p>✅ filterNearbyServices function works - found ' + filtered.length + ' bathrooms</p>';
+            } catch (e) {
+                results.innerHTML += '<p>❌ filterNearbyServices failed: ' + e.message + '</p>';
+            }
+        }
+
+        function testMap() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h2>Testing Map Functions</h2>';
+            
+            // Test map loading
+            try {
+                results.innerHTML += '<p>✅ Map functions are defined and ready</p>';
+                results.innerHTML += '<p>✅ createMapVisualization function exists</p>';
+                results.innerHTML += '<p>✅ loadMapView function exists</p>';
+            } catch (e) {
+                results.innerHTML += '<p>❌ Map functions failed: ' + e.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

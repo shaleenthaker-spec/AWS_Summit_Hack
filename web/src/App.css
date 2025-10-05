@@ -1,0 +1,171 @@
+/* Additional styles for the web app */
+.App {
+  text-align: center;
+}
+
+/* Responsive design improvements */
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .card {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .navigation {
+    padding: 4px;
+  }
+  
+  .nav-button {
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .service-item {
+    padding: 8px 0;
+  }
+  
+  .service-icon {
+    font-size: 20px;
+    margin-right: 8px;
+  }
+  
+  .service-name {
+    font-size: 13px;
+  }
+  
+  .service-details {
+    font-size: 11px;
+  }
+}
+
+/* Loading animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading::after {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 8px;
+}
+
+/* Button hover effects */
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Card hover effects */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+/* Service item hover effects */
+.service-item:hover {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  margin: 0 -8px;
+  padding: 12px 8px;
+  transition: all 0.2s ease;
+}
+
+/* Navigation active state */
+.nav-button.active {
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+/* Star rating animation */
+.star {
+  transition: transform 0.2s ease;
+}
+
+.star:hover {
+  transform: scale(1.2);
+}
+
+/* Input focus effects */
+.input:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Success and error message animations */
+.success, .error {
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header animation */
+header h1 {
+  animation: fadeInDown 0.6s ease;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card entrance animation */
+.card {
+  animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered animation for service items */
+.service-item {
+  animation: fadeInLeft 0.3s ease;
+}
+
+.service-item:nth-child(1) { animation-delay: 0.1s; }
+.service-item:nth-child(2) { animation-delay: 0.2s; }
+.service-item:nth-child(3) { animation-delay: 0.3s; }
+.service-item:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

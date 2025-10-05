@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚽 Lavatory Finder - Web App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: #111827;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 4px;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .navigation {
+            display: flex;
+            background: white;
+            border-radius: 16px;
+            padding: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            gap: 4px;
+        }
+
+        .nav-button {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-button:hover:not(.active) {
+            background-color: #f3f4f6;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background-color 0.2s ease;
+        }
+
+        .service-item:last-child {
+            border-bottom: none;
+        }
+
+        .service-item:hover {
+            background-color: #f9fafb;
+            border-radius: 12px;
+            margin: 0 -16px;
+            padding: 16px;
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            margin-right: 16px;
+            min-width: 48px;
+        }
+
+        .service-info {
+            flex: 1;
+        }
+
+        .service-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .service-details {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            margin-left: 8px;
+        }
+
+        .star {
+            color: #fbbf24;
+            font-size: 14px;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .error {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .success {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #059669;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .map-placeholder {
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .map-placeholder small {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+            }
+            
+            .nav-button {
+                text-align: center;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚽 Lavatory Finder</h1>
+            <p class="subtitle">Find nearby lavatory services - Web Version</p>
+        </header>
+
+        <nav class="navigation">
+            <button class="nav-button active" onclick="showTab('home')">🏠 Home</button>
+            <button class="nav-button" onclick="showTab('search')">🔍 Search</button>
+            <button class="nav-button" onclick="showTab('map')">🗺️ Map</button>
+            <button class="nav-button" onclick="showTab('profile')">👤 Profile</button>
+        </nav>
+
+        <main>
+            <!-- Home Tab -->
+            <div id="home-tab">
+                <div class="card">
+                    <h2>📍 Current Location</h2>
+                    <div id="location-info">
+                        <div class="loading" id="location-loading">
+                            <span class="spinner"></span>Getting location...
+                        </div>
+                        <div class="error hidden" id="location-error"></div>
+                        <div class="hidden" id="location-data"></div>
+                    </div>
+                    <button class="button" onclick="getCurrentLocation()" id="location-button">
+                        🔄 Get My Location
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h2>⚡ Quick Access</h2>
+                    <div class="grid">
+                        <button class="button" onclick="filterNearbyServices('bathroom')">🚽 Bathrooms</button>
+                        <button class="button" onclick="filterNearbyServices('water_fountain')">💧 Water Fountains</button>
+                        <button class="button" onclick="filterNearbyServices('hand_sanitizer')">🧴 Hand Sanitizer</button>
+                        <button class="button" onclick="filterNearbyServices('sink')">🚰 Sinks</button>
+                    </div>
+                    <div style="margin-top: 12px; text-align: center;">
+                        <button class="button" onclick="showAllNearbyServices()" style="background: #6b7280;">
+                            🔄 Show All Services
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>🏪 Nearby Services</h2>
+                    <div id="services-container">
+                        <div class="loading hidden" id="services-loading">
+                            <span class="spinner"></span>Finding nearby services...
+                        </div>
+                        <div id="services-list"></div>
+                    </div>
+                    <button class="button" onclick="refreshServices()" id="refresh-button">
+                        🔄 Refresh Services
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h2>ℹ️ App Status</h2>
+                    <div class="success">
+                        ✅ Web version running on localhost<br/>
+                        ✅ Location services available<br/>
+                        ✅ Mock data loaded<br/>
+                        ✅ Ready for AWS integration
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Tab -->
+            <div id="search-tab" class="hidden">
+                <div class="card">
+                    <h2>🔍 Search Services</h2>
+                    <input type="text" class="input" placeholder="Search for bathrooms, water fountains, etc..." id="search-input">
+                    <div class="grid">
+                        <button class="button" onclick="filterServices('bathroom')">🚽 Bathrooms</button>
+                        <button class="button" onclick="filterServices('water_fountain')">💧 Water</button>
+                        <button class="button" onclick="filterServices('hand_sanitizer')">🧴 Sanitizer</button>
+                        <button class="button" onclick="filterServices('sink')">🚰 Sinks</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📍 All Services</h2>
+                    <div id="all-services-list"></div>
+                </div>
+            </div>
+
+            <!-- Map Tab -->
+            <div id="map-tab" class="hidden">
+                <div class="card">
+                    <h2>🗺️ Interactive Map</h2>
+                    <div id="map-container" class="map-placeholder">
+                        <div id="map-content">
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <button class="button" onclick="loadMapView()" id="load-map-btn">
+                                    🗺️ Load Interactive Map
+                                </button>
+                            </div>
+                            <div id="map-instructions" style="color: #6b7280; font-size: 14px; text-align: center;">
+                                Click the button above to load an interactive map view with service locations
+                            </div>
+                        </div>
+                    </div>
+                    <div id="map-legend" class="hidden" style="margin-top: 16px;">
+                        <h3 style="margin-bottom: 12px; font-size: 16px;">📍 Service Types</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 20px;">🚽</span>
+                                <span style="font-size: 12px;">Bathrooms</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 20px;">💧</span>
+                                <span style="font-size: 12px;">Water Fountains</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 20px;">🧴</span>
+                                <span style="font-size: 12px;">Hand Sanitizer</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 20px;">🚰</span>
+                                <span style="font-size: 12px;">Sinks</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>📍 Service Locations</h2>
+                    <div id="map-services-list"></div>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profile-tab" class="hidden">
+                <div class="card">
+                    <h2>👤 Profile & Settings</h2>
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 12px;">App Settings</h3>
+                        <label style="display: block; margin-bottom: 8px;">
+                            <input type="checkbox" checked> Enable location services
+                        </label>
+                        <label style="display: block; margin-bottom: 8px;">
+                            <input type="checkbox" checked> Enable notifications
+                        </label>
+                        <label style="display: block; margin-bottom: 8px;">
+                            <input type="checkbox"> Dark mode
+                        </label>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin-bottom: 12px;">Search Radius</h3>
+                        <select class="input" style="margin-bottom: 0;">
+                            <option value="1">1 km</option>
+                            <option value="2">2 km</option>
+                            <option value="5" selected>5 km</option>
+                            <option value="10">10 km</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>📊 App Information</h2>
+                    <p><strong>Version:</strong> 1.0.0 (Web)</p>
+                    <p><strong>Platform:</strong> HTML5 Web App</p>
+                    <p><strong>Backend:</strong> AWS (Ready for integration)</p>
+                    <p><strong>Features:</strong> Location services, Service search, Reviews</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>🚽 Lavatory Finder - Built with HTML5 • Ready for AWS Integration</p>
+            <p style="font-size: 12px; margin-top: 8px;">
+                Running on localhost • Mock data for demonstration
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Mock data
+        const mockServices = [
+            {
+                id: '1',
+                name: 'City Mall Restroom',
+                type: 'bathroom',
+                rating: 4.2,
+                reviewCount: 156,
+                latitude: 37.7749,
+                longitude: -122.4194,
+                address: '123 Main St, Downtown',
+                amenities: ['wheelchair', 'baby-changing'],
+                isOpen: true,
+                distance: 0.5
+            },
+            {
+                id: '2',
+                name: 'Central Park Water Fountain',
+                type: 'water_fountain',
+                rating: 4.5,
+                reviewCount: 89,
+                latitude: 37.7849,
+                longitude: -122.4094,
+                address: '456 Park Ave',
+                amenities: ['filtered-water'],
+                isOpen: true,
+                distance: 1.2
+            },
+            {
+                id: '3',
+                name: 'Airport Terminal Sanitizer Station',
+                type: 'hand_sanitizer',
+                rating: 4.5,
+                reviewCount: 234,
+                latitude: 37.7649,
+                longitude: -122.4294,
+                address: '789 Airport Blvd',
+                amenities: ['touchless'],
+                isOpen: true,
+                distance: 2.1
+            },
+            {
+                id: '4',
+                name: 'Public Library Hand Washing Station',
+                type: 'sink',
+                rating: 4.5,
+                reviewCount: 67,
+                latitude: 37.7949,
+                longitude: -122.3994,
+                address: '321 Library St',
+                amenities: ['hot-water', 'soap-dispenser'],
+                isOpen: true,
+                distance: 0.8
+            },
+            {
+                id: '5',
+                name: 'Gas Station Restroom',
+                type: 'bathroom',
+                rating: 4.0,
+                reviewCount: 45,
+                latitude: 37.7549,
+                longitude: -122.4394,
+                address: '555 Highway 101',
+                amenities: ['24-hours'],
+                isOpen: true,
+                distance: 3.2
+            },
+            {
+                id: '6',
+                name: 'University Campus Fountain',
+                type: 'water_fountain',
+                rating: 4.5,
+                reviewCount: 123,
+                latitude: 37.8049,
+                longitude: -122.3894,
+                address: '999 University Ave',
+                amenities: ['filtered-water', 'bottle-fill'],
+                isOpen: true,
+                distance: 1.8
+            }
+        ];
+
+        let currentLocation = null;
+        let currentTab = 'home';
+
+        // Tab navigation
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('[id$="-tab"]').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            currentTab = tabName;
+            
+            // Load tab-specific content
+            if (tabName === 'search') {
+                loadAllServices();
+            }
+        }
+
+        // Get service icon
+        function getServiceIcon(type) {
+            const icons = {
+                'bathroom': '🚽',
+                'water_fountain': '💧',
+                'hand_sanitizer': '🧴',
+                'sink': '🚰'
+            };
+            return icons[type] || '📍';
+        }
+
+        // Render stars for rating
+        function renderStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<span class="star">⭐</span>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<span class="star">⭐</span>';
+            }
+            
+            return stars;
+        }
+
+        // Get current location
+        function getCurrentLocation() {
+            const loadingEl = document.getElementById('location-loading');
+            const errorEl = document.getElementById('location-error');
+            const dataEl = document.getElementById('location-data');
+            const buttonEl = document.getElementById('location-button');
+            
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            dataEl.classList.add('hidden');
+            buttonEl.disabled = true;
+            buttonEl.innerHTML = '<span class="spinner"></span>Getting Location...';
+            
+            if (!navigator.geolocation) {
+                showLocationError('Geolocation is not supported by this browser.');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    currentLocation = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+                    
+                    loadingEl.classList.add('hidden');
+                    dataEl.classList.remove('hidden');
+                    dataEl.innerHTML = `
+                        <p><strong>Latitude:</strong> ${currentLocation.latitude.toFixed(6)}</p>
+                        <p><strong>Longitude:</strong> ${currentLocation.longitude.toFixed(6)}</p>
+                        <p><strong>Accuracy:</strong> ${currentLocation.accuracy.toFixed(0)}m</p>
+                    `;
+                    
+                    buttonEl.disabled = false;
+                    buttonEl.innerHTML = '🔄 Refresh Location';
+                    
+                    // Fetch nearby services
+                    fetchNearbyServices();
+                },
+                (error) => {
+                    showLocationError('Unable to retrieve your location. Using default location for demo.');
+                    
+                    // Use default location (San Francisco) for demo
+                    currentLocation = { latitude: 37.7749, longitude: -122.4194, accuracy: 100 };
+                    
+                    setTimeout(() => {
+                        loadingEl.classList.add('hidden');
+                        dataEl.classList.remove('hidden');
+                        dataEl.innerHTML = `
+                            <p><strong>Latitude:</strong> ${currentLocation.latitude.toFixed(6)} (Demo)</p>
+                            <p><strong>Longitude:</strong> ${currentLocation.longitude.toFixed(6)} (Demo)</p>
+                            <p><strong>Accuracy:</strong> ${currentLocation.accuracy.toFixed(0)}m (Demo)</p>
+                        `;
+                        
+                        buttonEl.disabled = false;
+                        buttonEl.innerHTML = '🔄 Refresh Location';
+                        
+                        fetchNearbyServices();
+                    }, 1000);
+                }
+            );
+        }
+
+        function showLocationError(message) {
+            const loadingEl = document.getElementById('location-loading');
+            const errorEl = document.getElementById('location-error');
+            const buttonEl = document.getElementById('location-button');
+            
+            loadingEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+            errorEl.textContent = message;
+            
+            buttonEl.disabled = false;
+            buttonEl.innerHTML = '🔄 Try Again';
+        }
+
+        // Fetch nearby services
+        function fetchNearbyServices() {
+            if (!currentLocation) return;
+            
+            const loadingEl = document.getElementById('services-loading');
+            const listEl = document.getElementById('services-list');
+            const buttonEl = document.getElementById('refresh-button');
+            
+            loadingEl.classList.remove('hidden');
+            buttonEl.disabled = true;
+            buttonEl.innerHTML = '<span class="spinner"></span>Refreshing...';
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // Filter services by distance (mock calculation)
+                const servicesWithDistance = mockServices.map(service => ({
+                    ...service,
+                    distance: Math.sqrt(
+                        Math.pow(service.latitude - currentLocation.latitude, 2) +
+                        Math.pow(service.longitude - currentLocation.longitude, 2)
+                    ) * 111 // Rough conversion to km
+                })).filter(service => service.distance <= 5); // Within 5km
+                
+                // Sort by distance
+                servicesWithDistance.sort((a, b) => a.distance - b.distance);
+                
+                displayServices(servicesWithDistance, listEl);
+                
+                loadingEl.classList.add('hidden');
+                buttonEl.disabled = false;
+                buttonEl.innerHTML = '🔄 Refresh Services';
+            }, 1000);
+        }
+
+        function refreshServices() {
+            if (currentLocation) {
+                fetchNearbyServices();
+            } else {
+                getCurrentLocation();
+            }
+        }
+        
+        // Filter nearby services by type
+        function filterNearbyServices(type) {
+            console.log('Filtering services by type:', type);
+            
+            // Use default location if currentLocation is not set
+            const userLocation = currentLocation || { latitude: 37.7749, longitude: -122.4194 };
+            
+            const loadingEl = document.getElementById('services-loading');
+            const listEl = document.getElementById('services-list');
+            const buttonEl = document.getElementById('refresh-button');
+            
+            if (loadingEl) loadingEl.classList.remove('hidden');
+            if (buttonEl) {
+                buttonEl.disabled = true;
+                buttonEl.innerHTML = '<span class="spinner"></span>Filtering...';
+            }
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // Filter services by type and distance
+                const servicesWithDistance = mockServices
+                    .filter(service => service.type === type)
+                    .map(service => ({
+                        ...service,
+                        distance: Math.sqrt(
+                            Math.pow(service.latitude - userLocation.latitude, 2) +
+                            Math.pow(service.longitude - userLocation.longitude, 2)
+                        ) * 111 // Rough conversion to km
+                    }))
+                    .filter(service => service.distance <= 5) // Within 5km
+                    .sort((a, b) => a.distance - b.distance);
+                
+                if (listEl) displayServices(servicesWithDistance, listEl);
+                
+                if (loadingEl) loadingEl.classList.add('hidden');
+                if (buttonEl) {
+                    buttonEl.disabled = false;
+                    buttonEl.innerHTML = '🔄 Refresh Services';
+                }
+                
+                // Show filter result message
+                if (servicesWithDistance.length === 0 && listEl) {
+                    listEl.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: #6b7280; font-style: italic;">
+                            No ${type.replace('_', ' ')} found within 5km
+                        </div>
+                    `;
+                }
+            }, 500);
+        }
+        
+        // Show all nearby services
+        function showAllNearbyServices() {
+            console.log('Showing all nearby services...');
+            if (currentLocation) {
+                fetchNearbyServices();
+            } else {
+                // Use default location and fetch services
+                const userLocation = { latitude: 37.7749, longitude: -122.4194 };
+                const listEl = document.getElementById('services-list');
+                const loadingEl = document.getElementById('services-loading');
+                
+                if (loadingEl) loadingEl.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    const servicesWithDistance = mockServices.map(service => ({
+                        ...service,
+                        distance: Math.sqrt(
+                            Math.pow(service.latitude - userLocation.latitude, 2) +
+                            Math.pow(service.longitude - userLocation.longitude, 2)
+                        ) * 111
+                    })).filter(service => service.distance <= 5).sort((a, b) => a.distance - b.distance);
+                    
+                    if (listEl) displayServices(servicesWithDistance, listEl);
+                    if (loadingEl) loadingEl.classList.add('hidden');
+                }, 500);
+            }
+        }
+
+        // Display services
+        function displayServices(services, container) {
+            if (services.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6b7280; font-style: italic; padding: 20px;">No services found nearby</p>';
+                return;
+            }
+            
+            const servicesHtml = services.slice(0, 5).map(service => `
+                <div class="service-item" onclick="showServiceDetails('${service.id}')" style="cursor: pointer;">
+                    <span class="service-icon">${getServiceIcon(service.type)}</span>
+                    <div class="service-info">
+                        <div class="service-name">${service.name}</div>
+                        <div class="service-details">
+                            ${service.type.replace('_', ' ')} • ${service.distance ? service.distance.toFixed(1) + 'km' : 'Unknown distance'} • 
+                            <span class="rating">${renderStars(service.rating)} ${service.rating.toFixed(1)}</span>
+                        </div>
+                        <div style="font-size: 11px; color: #9ca3af; margin-top: 2px;">
+                            ${service.address}
+                        </div>
+                    </div>
+                    <div style="margin-left: 8px;">
+                        <button class="button" onclick="event.stopPropagation(); showServiceDetails('${service.id}')" 
+                                style="font-size: 10px; padding: 4px 8px; background: #667eea;">
+                            View
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            let moreText = '';
+            if (services.length > 5) {
+                moreText = `<p style="text-align: center; color: #667eea; font-style: italic; margin-top: 8px;">+${services.length - 5} more services nearby</p>`;
+            }
+            
+            container.innerHTML = servicesHtml + moreText;
+        }
+
+        // Load all services for search tab
+        function loadAllServices() {
+            const container = document.getElementById('all-services-list');
+            displayServices(mockServices, container);
+        }
+
+        // Filter services by type
+        function filterServices(type) {
+            const filtered = mockServices.filter(service => service.type === type);
+            const container = document.getElementById('all-services-list');
+            displayServices(filtered, container);
+        }
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            if (query.length < 2) {
+                loadAllServices();
+                return;
+            }
+            
+            const filtered = mockServices.filter(service => 
+                service.name.toLowerCase().includes(query) ||
+                service.address.toLowerCase().includes(query) ||
+                service.type.replace('_', ' ').toLowerCase().includes(query)
+            );
+            
+            const container = document.getElementById('all-services-list');
+            displayServices(filtered, container);
+        });
+
+        // Map functionality
+        function loadMapView() {
+            console.log('Loading map view...');
+            
+            const mapContent = document.getElementById('map-content');
+            const mapLegend = document.getElementById('map-legend');
+            const loadBtn = document.getElementById('load-map-btn');
+            
+            if (!mapContent || !loadBtn) {
+                console.error('Map elements not found');
+                return;
+            }
+            
+            // Show loading state
+            loadBtn.disabled = true;
+            loadBtn.innerHTML = '<span class="spinner"></span>Loading Map...';
+            
+            // Simulate map loading
+            setTimeout(() => {
+                // Create interactive map visualization
+                mapContent.innerHTML = createMapVisualization();
+                if (mapLegend) mapLegend.classList.remove('hidden');
+                loadBtn.style.display = 'none';
+                
+                // Load services for map
+                loadMapServices();
+                console.log('Map loaded successfully');
+            }, 1000);
+        }
+        
+        function createMapVisualization() {
+            return `
+                <div style="position: relative; height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; overflow: hidden;">
+                    <div style="position: absolute; top: 20px; left: 20px; background: rgba(255,255,255,0.9); padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 500;">
+                        📍 Interactive Map View
+                    </div>
+                    <div style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 8px 12px; border-radius: 8px; font-size: 12px;">
+                        Zoom: <span id="map-zoom">12</span>
+                    </div>
+                    <div style="position: absolute; bottom: 20px; left: 20px; background: rgba(255,255,255,0.9); padding: 8px 12px; border-radius: 8px; font-size: 12px;">
+                        Services: <span id="map-service-count">6</span>
+                    </div>
+                    <div id="map-markers" style="position: relative; width: 100%; height: 100%;">
+                        ${createMapMarkers()}
+                    </div>
+                    <div style="position: absolute; bottom: 20px; right: 20px;">
+                        <button class="button" onclick="resetMapView()" style="font-size: 12px; padding: 8px 12px;">
+                            🔄 Reset View
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function createMapMarkers() {
+            const markers = [];
+            const centerX = 200; // Center of map
+            const centerY = 200;
+            
+            mockServices.forEach((service, index) => {
+                // Create random positions around center
+                const angle = (index / mockServices.length) * 2 * Math.PI;
+                const distance = 50 + Math.random() * 80;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                markers.push(`
+                    <div class="map-marker" 
+                         style="position: absolute; left: ${x}px; top: ${y}px; 
+                                transform: translate(-50%, -50%); cursor: pointer;
+                                transition: all 0.2s ease;"
+                         onclick="showServiceDetails('${service.id}')"
+                         onmouseover="highlightMarker(this, '${service.name}')"
+                         onmouseout="unhighlightMarker(this)">
+                        <div style="background: white; border: 2px solid #667eea; border-radius: 50%; 
+                                    width: 30px; height: 30px; display: flex; align-items: center; 
+                                    justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                            ${getServiceIcon(service.type)}
+                        </div>
+                        <div class="marker-tooltip" style="position: absolute; bottom: 35px; left: 50%; 
+                                                          transform: translateX(-50%); background: rgba(0,0,0,0.8); 
+                                                          color: white; padding: 4px 8px; border-radius: 4px; 
+                                                          font-size: 11px; white-space: nowrap; opacity: 0; 
+                                                          transition: opacity 0.2s ease; pointer-events: none;">
+                            ${service.name}
+                        </div>
+                    </div>
+                `);
+            });
+            
+            // Add user location marker
+            markers.push(`
+                <div style="position: absolute; left: ${centerX}px; top: ${centerY}px; 
+                            transform: translate(-50%, -50%);">
+                    <div style="background: #dc2626; border: 3px solid white; border-radius: 50%; 
+                                width: 20px; height: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                    </div>
+                    <div style="position: absolute; bottom: 25px; left: 50%; 
+                                transform: translateX(-50%); background: rgba(0,0,0,0.8); 
+                                color: white; padding: 4px 8px; border-radius: 4px; 
+                                font-size: 11px; white-space: nowrap;">
+                        You are here
+                    </div>
+                </div>
+            `);
+            
+            return markers.join('');
+        }
+        
+        function highlightMarker(marker, serviceName) {
+            marker.style.transform = 'translate(-50%, -50%) scale(1.2)';
+            const tooltip = marker.querySelector('.marker-tooltip');
+            if (tooltip) {
+                tooltip.style.opacity = '1';
+            }
+        }
+        
+        function unhighlightMarker(marker) {
+            marker.style.transform = 'translate(-50%, -50%) scale(1)';
+            const tooltip = marker.querySelector('.marker-tooltip');
+            if (tooltip) {
+                tooltip.style.opacity = '0';
+            }
+        }
+        
+        function showServiceDetails(serviceId) {
+            const service = mockServices.find(s => s.id === serviceId);
+            if (service) {
+                // Create modal overlay
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.5); z-index: 1000; display: flex;
+                    align-items: center; justify-content: center; padding: 20px;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="background: white; border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2 style="margin: 0; font-size: 20px; color: #111827;">${getServiceIcon(service.type)} ${service.name}</h2>
+                            <button onclick="this.closest('.modal-overlay').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280;">&times;</button>
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-weight: 500;">Type:</span>
+                                <span style="background: #f3f4f6; padding: 4px 8px; border-radius: 6px; font-size: 12px; text-transform: capitalize;">
+                                    ${service.type.replace('_', ' ')}
+                                </span>
+                            </div>
+                            
+                            <div style="margin-bottom: 8px;">
+                                <span style="font-weight: 500;">📍 Address:</span>
+                                <div style="color: #6b7280; margin-top: 2px;">${service.address}</div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <span style="font-weight: 500;">Rating:</span>
+                                <span class="rating">${renderStars(service.rating)} ${service.rating.toFixed(1)}</span>
+                                <span style="color: #6b7280; font-size: 14px;">(${service.reviewCount} reviews)</span>
+                            </div>
+                            
+                            ${service.distance ? `
+                                <div style="margin-bottom: 8px;">
+                                    <span style="font-weight: 500;">Distance:</span>
+                                    <span style="color: #667eea; font-weight: 500;">${service.distance.toFixed(1)}km away</span>
+                                </div>
+                            ` : ''}
+                            
+                            <div style="margin-bottom: 8px;">
+                                <span style="font-weight: 500;">Amenities:</span>
+                                <div style="margin-top: 4px;">
+                                    ${service.amenities.map(amenity => `
+                                        <span style="background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-right: 4px; display: inline-block; margin-bottom: 2px;">
+                                            ${amenity.replace('-', ' ')}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; margin-top: 20px;">
+                            <button class="button" onclick="getDirections('${service.id}')" style="flex: 1;">
+                                🧭 Get Directions
+                            </button>
+                            <button class="button" onclick="addReview('${service.id}')" style="flex: 1; background: #059669;">
+                                ⭐ Add Review
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                modal.className = 'modal-overlay';
+                document.body.appendChild(modal);
+                
+                // Close modal when clicking outside
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+        }
+        
+        function getDirections(serviceId) {
+            const service = mockServices.find(s => s.id === serviceId);
+            if (service) {
+                alert(`🧭 Directions to ${service.name}\n\nThis would open your default maps app with directions to:\n${service.address}\n\nCoordinates: ${service.latitude}, ${service.longitude}`);
+            }
+        }
+        
+        function addReview(serviceId) {
+            const service = mockServices.find(s => s.id === serviceId);
+            if (service) {
+                alert(`⭐ Add Review for ${service.name}\n\nThis would open a review form where you can:\n• Rate the service (1-5 stars)\n• Write a comment\n• Add photos\n• Report amenities available`);
+            }
+        }
+        
+        function resetMapView() {
+            console.log('Resetting map view...');
+            const mapContent = document.getElementById('map-content');
+            const mapLegend = document.getElementById('map-legend');
+            
+            if (mapContent) {
+                mapContent.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <button class="button" onclick="loadMapView()" id="load-map-btn">
+                            🗺️ Load Interactive Map
+                        </button>
+                    </div>
+                    <div id="map-instructions" style="color: #6b7280; font-size: 14px; text-align: center;">
+                        Click the button above to load an interactive map view with service locations
+                    </div>
+                `;
+            }
+            
+            if (mapLegend) mapLegend.classList.add('hidden');
+        }
+        
+        function loadMapServices() {
+            const container = document.getElementById('map-services-list');
+            const servicesHtml = mockServices.map(service => `
+                <div class="service-item" onclick="showServiceDetails('${service.id}')" style="cursor: pointer;">
+                    <span class="service-icon">${getServiceIcon(service.type)}</span>
+                    <div class="service-info">
+                        <div class="service-name">${service.name}</div>
+                        <div class="service-details">
+                            ${service.address} • 
+                            <span class="rating">${renderStars(service.rating)} ${service.rating.toFixed(1)} (${service.reviewCount} reviews)</span>
+                            ${service.distance ? ` • ${service.distance.toFixed(1)}km away` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = servicesHtml;
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-get location on page load
+            getCurrentLocation();
+        });
+    </script>
+</body>
+</html>
