@@ -1,0 +1,388 @@
+AI INTEGRATION INSTRUCTIONS FOR LAVATORY FINDER APP
+=====================================================
+
+This file contains specific instructions for AI assistants to automatically integrate AWS services into the Lavatory Finder React Native application.
+
+## OVERVIEW
+The Lavatory Finder app is a React Native application that helps users find nearby bathrooms, water fountains, hand sanitizers, and sinks. The frontend is complete with minimalistic design and touch-minimal interactions, but requires AWS backend integration for full functionality.
+
+## PROJECT STRUCTURE
+```
+/Users/yifanfang/Documents/GitHub/AWS_Summit_Hack/
+├── App.tsx                          # Main app component with navigation
+├── package.json                     # Dependencies and scripts
+├── src/
+│   ├── components/                  # Reusable UI components
+│   │   ├── AdBanner.tsx            # Advertisement placement component
+│   │   ├── ReviewCard.tsx          # Review display component
+│   │   ├── ServiceCard.tsx         # Service listing component
+│   │   └── VoiceButton.tsx         # Voice control button
+│   ├── context/                     # React context providers
+│   │   ├── LocationContext.tsx     # GPS location management
+│   │   └── VoiceControlContext.tsx # Voice recognition
+│   ├── screens/                     # Main app screens
+│   │   ├── HomeScreen.tsx          # Main dashboard
+│   │   ├── MapScreen.tsx           # GPS map with markers
+│   │   ├── SearchScreen.tsx        # Service search functionality
+│   │   ├── ServiceDetailScreen.tsx # Detailed service view
+│   │   ├── ProfileScreen.tsx       # User settings and profile
+│   │   └── AddReviewScreen.tsx     # Review submission
+│   └── types/                       # TypeScript type definitions
+│       └── Service.ts              # Data models and interfaces
+├── AWS_INTEGRATION_GUIDE.md        # Comprehensive AWS setup guide
+└── AI_INTEGRATION_INSTRUCTIONS.txt # This file
+```
+
+## CRITICAL INTEGRATION POINTS
+
+### 1. AUTHENTICATION REPLACEMENT
+**Files to modify:** All screen files that use user data
+**Pattern to find:** "AWS INTEGRATION PLACEHOLDER: Replace with actual AWS API calls"
+**Action required:** 
+- Implement Amazon Cognito authentication
+- Replace mock user data with real user sessions
+- Add proper JWT token handling
+
+### 2. DATA SERVICE REPLACEMENT
+**Files to modify:** 
+- src/screens/HomeScreen.tsx (fetchNearbyServices function)
+- src/screens/MapScreen.tsx (fetchNearbyServices function)  
+- src/screens/SearchScreen.tsx (searchServices function)
+- src/screens/ServiceDetailScreen.tsx (fetchServiceDetails, fetchServiceReviews functions)
+
+**Pattern to find:** "TODO: Replace with actual AWS API call"
+**Action required:**
+- Replace mock data arrays with DynamoDB queries
+- Implement API Gateway endpoints
+- Add proper error handling and loading states
+
+### 3. IMAGE UPLOAD REPLACEMENT
+**Files to modify:** src/screens/AddReviewScreen.tsx, src/components/ServiceCard.tsx
+**Pattern to find:** "imageUrl: null, // Will be populated from AWS S3"
+**Action required:**
+- Implement S3 image upload functionality
+- Add CloudFront CDN URLs
+- Handle image compression and optimization
+
+### 4. ANALYTICS INTEGRATION
+**Files to modify:** All screen files with user interactions
+**Pattern to find:** "TODO: Track [event] with AWS Pinpoint Analytics"
+**Action required:**
+- Implement Amazon Pinpoint event tracking
+- Add user behavior analytics
+- Set up custom events for business metrics
+
+### 5. AD INTEGRATION REPLACEMENT
+**Files to modify:** src/components/AdBanner.tsx
+**Pattern to find:** "Mock ad data for development - REMOVE when AWS integration is complete"
+**Action required:**
+- Integrate with Amazon DSP or Google AdMob
+- Implement real ad serving logic
+- Add proper ad tracking and analytics
+
+## SPECIFIC CODE REPLACEMENTS
+
+### A. Replace Mock Service Data
+**Find this pattern in multiple files:**
+```typescript
+// AWS INTEGRATION PLACEHOLDER: Replace with actual AWS API calls
+const fetchNearbyServices = async (latitude: number, longitude: number): Promise<ServiceType[]> => {
+  // TODO: Replace with actual AWS API call
+  // Example: const response = await API.get('/services/nearby', { lat, lng, radius: 1000 });
+  
+  // Mock data for development - REMOVE when AWS integration is complete
+  return [
+    {
+      id: '1',
+      name: 'City Mall Restroom',
+      // ... mock data
+    },
+  ];
+};
+```
+
+**Replace with:**
+```typescript
+const fetchNearbyServices = async (latitude: number, longitude: number): Promise<ServiceType[]> => {
+  try {
+    const response = await API.get('lavatoryApi', '/services/nearby', {
+      queryStringParameters: {
+        lat: latitude.toString(),
+        lng: longitude.toString(),
+        radius: '1000',
+      },
+    });
+    return response.services;
+  } catch (error) {
+    console.error('Failed to fetch nearby services:', error);
+    throw error;
+  }
+};
+```
+
+### B. Replace Mock Review Data
+**Find this pattern:**
+```typescript
+// AWS INTEGRATION PLACEHOLDER: Replace with actual AWS API calls
+const fetchServiceReviews = async (serviceId: string): Promise<Review[]> => {
+  // TODO: Replace with actual AWS API call
+  // Example: const response = await API.get(`/services/${serviceId}/reviews`);
+  
+  // Mock reviews for development - REMOVE when AWS integration is complete
+  return [
+    {
+      id: '1',
+      serviceId,
+      // ... mock review data
+    },
+  ];
+};
+```
+
+**Replace with:**
+```typescript
+const fetchServiceReviews = async (serviceId: string): Promise<Review[]> => {
+  try {
+    const response = await API.get('lavatoryApi', `/services/${serviceId}/reviews`);
+    return response.reviews;
+  } catch (error) {
+    console.error('Failed to fetch service reviews:', error);
+    throw error;
+  }
+};
+```
+
+### C. Replace Mock Ad Data
+**Find this pattern in AdBanner.tsx:**
+```typescript
+// Mock ad data for development - REMOVE when AWS integration is complete
+const mockAdContent = {
+  id: adId,
+  title: 'Premium Cleaning Services',
+  // ... mock ad data
+};
+```
+
+**Replace with:**
+```typescript
+const fetchAdContent = async (adId: string): Promise<AdContent | null> => {
+  try {
+    const response = await fetch('https://your-ad-server.com/ads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        placementId: adId,
+        userId: await getCurrentUserId(),
+        location: await getCurrentLocation(),
+      }),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch ad content:', error);
+    return null;
+  }
+};
+```
+
+## REQUIRED AWS SERVICES SETUP
+
+### 1. Authentication (Amazon Cognito)
+- Create User Pool with email authentication
+- Configure password policies and MFA
+- Set up Identity Pool for guest access
+- Add social login providers (optional)
+
+### 2. Data Storage (Amazon DynamoDB)
+- Create tables: 'lavatory-services', 'lavatory-reviews', 'lavatory-users'
+- Set up Global Secondary Indexes for efficient queries
+- Configure TTL for temporary data
+- Set up backup and point-in-time recovery
+
+### 3. API Layer (API Gateway + Lambda)
+- Create REST API with proper CORS configuration
+- Implement Lambda functions for each endpoint
+- Set up API keys and usage plans
+- Configure request/response validation
+
+### 4. File Storage (Amazon S3 + CloudFront)
+- Create S3 bucket for images with proper permissions
+- Set up CloudFront distribution for CDN
+- Configure image optimization and compression
+- Implement content moderation (optional)
+
+### 5. Analytics (Amazon Pinpoint)
+- Create Pinpoint project for analytics
+- Set up custom events and attributes
+- Configure push notifications
+- Set up campaign management
+
+### 6. Monitoring (CloudWatch)
+- Set up log groups for Lambda functions
+- Create custom metrics and dashboards
+- Set up alarms for error rates and latency
+- Configure log retention policies
+
+## IMPLEMENTATION PRIORITY
+
+### Phase 1 (Critical - Week 1)
+1. Set up AWS Amplify project
+2. Configure Amazon Cognito authentication
+3. Create DynamoDB tables with proper schemas
+4. Replace all mock data fetching functions
+5. Implement basic API Gateway endpoints
+
+### Phase 2 (Important - Week 2)
+1. Set up S3 bucket and CloudFront for images
+2. Implement image upload functionality
+3. Add Amazon Pinpoint analytics tracking
+4. Replace mock ad integration with real ad serving
+5. Set up push notifications
+
+### Phase 3 (Enhancement - Week 3)
+1. Add advanced search functionality
+2. Implement real-time updates with AppSync
+3. Add content moderation for reviews
+4. Set up comprehensive monitoring
+5. Optimize performance and caching
+
+## TESTING REQUIREMENTS
+
+### Unit Tests
+- Test all service functions with mock AWS responses
+- Test error handling and edge cases
+- Test authentication flows
+- Test image upload/download functionality
+
+### Integration Tests
+- Test API Gateway endpoints with real AWS services
+- Test DynamoDB queries and mutations
+- Test S3 file operations
+- Test Cognito authentication flows
+
+### End-to-End Tests
+- Test complete user journeys
+- Test offline/online scenarios
+- Test performance under load
+- Test security and authorization
+
+## SECURITY CONSIDERATIONS
+
+1. **Authentication Security**
+   - Implement proper JWT token validation
+   - Set up refresh token rotation
+   - Add device fingerprinting
+   - Implement rate limiting
+
+2. **Data Security**
+   - Encrypt sensitive data at rest
+   - Use HTTPS for all communications
+   - Implement input validation and sanitization
+   - Set up proper IAM roles and policies
+
+3. **API Security**
+   - Implement API key authentication
+   - Set up request throttling
+   - Add request/response logging
+   - Implement CORS properly
+
+4. **Image Security**
+   - Validate file types and sizes
+   - Implement content scanning
+   - Set up signed URLs for secure access
+   - Add image watermarking (optional)
+
+## DEPLOYMENT STEPS
+
+### Development Environment
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up AWS Amplify: `amplify init`
+4. Configure environment variables
+5. Run the app: `npm start`
+
+### Staging Environment
+1. Deploy Lambda functions to staging
+2. Set up staging DynamoDB tables
+3. Configure staging API Gateway
+4. Test all functionality
+5. Run integration tests
+
+### Production Environment
+1. Deploy to production AWS account
+2. Set up production monitoring
+3. Configure backup and disaster recovery
+4. Set up CI/CD pipelines
+5. Monitor performance and costs
+
+## COST OPTIMIZATION
+
+1. **DynamoDB**
+   - Use on-demand billing for variable workloads
+   - Implement proper indexing to reduce read/write units
+   - Set up TTL for temporary data
+   - Monitor and optimize query patterns
+
+2. **Lambda**
+   - Optimize function memory allocation
+   - Use provisioned concurrency for predictable loads
+   - Implement proper error handling to avoid retries
+   - Monitor cold start performance
+
+3. **S3**
+   - Use appropriate storage classes
+   - Implement lifecycle policies
+   - Compress images before upload
+   - Use CloudFront for caching
+
+4. **API Gateway**
+   - Use caching for frequently accessed data
+   - Implement proper request throttling
+   - Monitor usage and costs
+   - Use regional endpoints when possible
+
+## MONITORING AND ALERTING
+
+### Key Metrics to Monitor
+- API response times and error rates
+- DynamoDB read/write capacity usage
+- Lambda function duration and errors
+- S3 storage usage and request counts
+- CloudFront cache hit ratios
+- User authentication success rates
+
+### Alerts to Set Up
+- High error rates (>5%)
+- High latency (>2 seconds)
+- Unusual traffic patterns
+- Failed authentication attempts
+- Storage quota approaching limits
+- Cost threshold alerts
+
+## SUPPORT AND MAINTENANCE
+
+### Regular Tasks
+- Monitor application performance
+- Review and optimize costs
+- Update dependencies and security patches
+- Backup data and test recovery procedures
+- Review and update IAM policies
+- Monitor and respond to security alerts
+
+### Documentation Updates
+- Keep API documentation current
+- Update deployment procedures
+- Document any custom configurations
+- Maintain troubleshooting guides
+- Update cost optimization recommendations
+
+---
+
+## FINAL NOTES
+
+This application is designed to be production-ready once AWS integration is complete. All placeholder code is clearly marked and documented. The architecture is scalable and follows AWS best practices.
+
+The frontend is optimized for minimal touch interaction with voice controls and gestures, making it accessible and user-friendly for finding essential services while maintaining hygiene.
+
+Focus on implementing the core functionality first (authentication, data storage, basic API), then add advanced features like analytics, ads, and real-time updates.
+
+Remember to test thoroughly in development before deploying to production, and monitor costs and performance continuously.
